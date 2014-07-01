@@ -6,21 +6,20 @@ class Tree
   end
 
   def print_names(node)
-    puts node.name
-    node.children.each do |child_node|
-      print_names(child_node)
-    end
+    action = lambda {|x| puts x.name}
+    walk_tree(node, action)
   end
 
   def names(node)
-    add_names(node)
+    action = lambda {|x| @result_array << x.name}
+    walk_tree(node, action)
     @result_array
   end
 
-  def add_names(node)
-    @result_array << node.name
+  def walk_tree(node, action)
+    action.call(node)
     node.children.each do |child_node|
-      add_names(child_node)
+      walk_tree(child_node,action)
     end
   end
 
