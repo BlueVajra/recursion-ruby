@@ -3,36 +3,45 @@ require 'node'
 class Tree
 
   def print_names(node)
-    action = lambda { |x| puts x.name }
+    action = proc { |x| puts x.name }
     walk_tree(node, action)
   end
 
   def names(node)
-    @result_array = []
-    action = lambda { |x| @result_array << x.name }
+    result_array = []
+    action = proc { |x| result_array << x.name }
     walk_tree(node, action)
-    @result_array
+    result_array
   end
 
   def names_with_indentation(node)
-    @result_array = []
-    indent_tree(node, 0)
-    @result_array
+    result_array = []
+    action = proc do |x, level|
+      result_array << ("  " * level) + x.name
+    end
+    walk_tree(node, action)
+    result_array
   end
 
-  def indent_tree(node, level)
-    @result_array <<  ("  " * level) + node.name
-    node.children.each do |y|
-      indent_tree(y, (level + 1))
+  def to_hash(node)
+    result_hash = {}
+    add_hashes(node, result_hash)
+    result_hash
+  end
+
+  def add_hashes(node, parent_hash)
+    parent_hash[node.name] = {}
+    node.children.each do |child|
+      add_hashes(child, parent_hash[node.name])
     end
   end
 
   private
 
-  def walk_tree(node, action)
-    action.call(node)
+  def walk_tree(node, action, level = 0)
+    action.call(node, level)
     node.children.each do |child_node|
-      walk_tree(child_node, action)
+      walk_tree(child_node, action, level + 1)
     end
   end
 
