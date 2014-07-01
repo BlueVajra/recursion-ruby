@@ -20,7 +20,6 @@ describe Tree do
   end
 
   it "can return an array of all names recursively" do
-    pending
     trystan = build_tree "Trystan" do
       add_child "Peggie"
       add_child "Sierra" do
