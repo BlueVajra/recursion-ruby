@@ -25,23 +25,20 @@ class Tree
 
   def to_hash(node)
     result_hash = {}
-    add_hashes(node, result_hash)
-    result_hash
-  end
-
-  def add_hashes(node, parent_hash)
-    parent_hash[node.name] = {}
-    node.children.each do |child|
-      add_hashes(child, parent_hash[node.name])
+    action = proc do |n, level, parent_hash|
+      parent_hash[n.name] = {}
     end
+    walk_tree(node, action, 0, result_hash)
+    result_hash
   end
 
   private
 
-  def walk_tree(node, action, level = 0)
-    action.call(node, level)
+  def walk_tree(node, action, level = 0, parent_hash = {})
+    action.call(node, level, parent_hash)
     node.children.each do |child_node|
-      walk_tree(child_node, action, level + 1)
+      parent = parent_hash[node.name] if parent_hash
+      walk_tree(child_node, action, level + 1, parent)
     end
   end
 
